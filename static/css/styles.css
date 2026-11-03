@@ -1,0 +1,38 @@
+/* Vora TimeTrack custom styles (loaded after Bootstrap). */
+
+:root {
+  --vora-navy: #14213d;
+  --vora-accent: #0f9d8a;
+  --vora-accent-dark: #0b7a6b;
+}
+
+body { background-color: #f5f7fa; }
+
+.vora-nav { background-color: var(--vora-navy); }
+.text-accent { color: var(--vora-accent) !important; }
+.bg-accent { background-color: var(--vora-accent) !important; }
+
+.btn-accent {
+  background-color: var(--vora-accent);
+  border-color: var(--vora-accent);
+  color: #fff;
+}
+.btn-accent:hover, .btn-accent:focus {
+  background-color: var(--vora-accent-dark);
+  border-color: var(--vora-accent-dark);
+  color: #fff;
+}
+
+.hero { background: linear-gradient(135deg, var(--vora-navy) 0%, #1f3a63 100%); color: #fff; }
+
+.stat-card { border: 0; box-shadow: 0 1px 3px rgba(20, 33, 61, 0.08); }
+.stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: #6c757d; margin-bottom: 0.25rem; }
+.stat-value { font-size: 1.9rem; font-weight: 700; color: var(--vora-navy); margin-bottom: 0; }
+.stat-note { font-size: 0.8rem; color: #6c757d; margin: 0; }
+
+/* Timesheet status pills */
+.status { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
+.status-draft     { background: #e9ecef; color: #495057; }
+.status-submitted { background: #fff3cd; color: #7a5b00; }
+.status-approved  { background: #d1f2e4; color: #0b6b4a; }
+.status-rejected  { background: #f8d7da; color: #842029; }

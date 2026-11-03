@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Vora TimeTrack &ndash; Engineer time tracking{% endblock %}
+
+{% block content %}
+<section class="hero py-5">
+  <div class="container py-lg-4">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <p class="text-uppercase small fw-semibold text-accent mb-2">Vora Global Solutions &middot; Vora Nexus</p>
+        <h1 class="display-5 fw-bold mb-3">Every engineering hour, recorded and ready for billing.</h1>
+        <p class="lead text-white-50 mb-4">
+          Engineers log their work each day, submit a weekly timesheet, and managers approve it.
+          Billable hours flow straight into project reports.
+        </p>
+        <a href="{% url 'core:dashboard' %}" class="btn btn-accent btn-lg me-2">View dashboard</a>
+        <span class="text-white-50 small">Sign-in arrives in Phase 2</span>
+      </div>
+      <div class="col-lg-5">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <p class="small text-muted mb-2">This week (sample)</p>
+            <div class="d-flex justify-content-between border-bottom py-2"><span>Hours logged</span><strong>{{ summary.total_hours|floatformat:1 }}</strong></div>
+            <div class="d-flex justify-content-between border-bottom py-2"><span>Billable</span><strong>{{ summary.billable_percent }}%</strong></div>
+            <div class="d-flex justify-content-between py-2"><span>Awaiting approval</span><strong>{{ summary.pending_approvals }}</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <h2 class="h5 fw-semibold">1. Log time</h2>
+        <p class="text-muted mb-0">Date, project, task, hours and a short description of the work.</p>
+      </div>
+      <div class="col-md-4">
+        <h2 class="h5 fw-semibold">2. Submit weekly</h2>
+        <p class="text-muted mb-0">Engineers submit one timesheet per week for their manager to review.</p>
+      </div>
+      <div class="col-md-4">
+        <h2 class="h5 fw-semibold">3. Approve &amp; report</h2>
+        <p class="text-muted mb-0">Managers approve or reject; reports split billable and non-billable hours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
