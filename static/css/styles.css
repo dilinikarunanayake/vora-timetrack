@@ -1,34 +1,98 @@
-/* Vora TimeTrack custom styles (loaded after Bootstrap). */
+/* Vora TimeTrack styles (loaded after Bootstrap, so these win).
+   Colours are taken from the Vora Global Solutions logo. */
 
 :root {
-  --vora-navy: #14213d;
-  --vora-accent: #0f9d8a;
-  --vora-accent-dark: #0b7a6b;
+  --vora-navy: #021a40;        /* logo background */
+  --vora-navy-deep: #011231;
+  --vora-blue: #0a6fd1;        /* logo lettering: buttons and links */
+  --vora-blue-dark: #0857a8;
+  --vora-sky: #29a8e8;         /* logo highlight: accents on dark backgrounds */
+  --vora-silver: #c5ccd6;      /* logo swoosh */
+  --vora-paper: #f4f6f9;
+  --vora-orange: #ff7e00;      /* product name and Vora Nexus */
+
+  /* The device's own interface font: San Francisco on Apple, Segoe UI on Windows. */
+  --bs-body-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --bs-link-color: var(--vora-blue);
+  --bs-link-color-rgb: 10, 111, 209;
+  --bs-link-hover-color: var(--vora-blue-dark);
+  --bs-link-hover-color-rgb: 8, 87, 168;
 }
 
-body { background-color: #f5f7fa; }
+body { background-color: var(--vora-paper); }
+
+h1, h2, h3, .h1, .h2, .h3 { letter-spacing: -0.015em; }
 
 .vora-nav { background-color: var(--vora-navy); }
-.text-accent { color: var(--vora-accent) !important; }
-.bg-accent { background-color: var(--vora-accent) !important; }
+.vora-nav .brand-name { color: var(--vora-orange); }
+.vora-nav .navbar-brand img { width: 28px; height: 28px; margin-right: 0.5rem; vertical-align: -7px; }
+.text-accent { color: var(--vora-sky) !important; }
+.bg-accent { background-color: var(--vora-blue) !important; }
 
 .btn-accent {
-  background-color: var(--vora-accent);
-  border-color: var(--vora-accent);
-  color: #fff;
-}
-.btn-accent:hover, .btn-accent:focus {
-  background-color: var(--vora-accent-dark);
-  border-color: var(--vora-accent-dark);
-  color: #fff;
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--vora-blue);
+  --bs-btn-border-color: var(--vora-blue);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--vora-blue-dark);
+  --bs-btn-hover-border-color: var(--vora-blue-dark);
+  --bs-btn-active-bg: var(--vora-blue-dark);
+  --bs-btn-active-border-color: var(--vora-blue-dark);
+  --bs-btn-active-color: #fff;
+  --bs-btn-focus-shadow-rgb: 41, 168, 232;
 }
 
-.hero { background: linear-gradient(135deg, var(--vora-navy) 0%, #1f3a63 100%); color: #fff; }
+/* Clear keyboard focus everywhere */
+a:focus-visible, .btn:focus-visible, .form-control:focus-visible, .form-select:focus-visible {
+  outline: 3px solid var(--vora-sky);
+  outline-offset: 2px;
+}
 
-.stat-card { border: 0; box-shadow: 0 1px 3px rgba(20, 33, 61, 0.08); }
-.stat-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: #6c757d; margin-bottom: 0.25rem; }
-.stat-value { font-size: 1.9rem; font-weight: 700; color: var(--vora-navy); margin-bottom: 0; }
+/* Dark brand surfaces use the logo's own background so the logo sits seamlessly */
+.brand-dark {
+  background: radial-gradient(ellipse at 30% 35%, #002457 0%, var(--vora-navy) 55%, var(--vora-navy-deep) 100%);
+  color: #fff;
+}
+.brand-dark .lead, .brand-dark .muted-on-dark { color: #a9bddb; }
+
+/* Home page */
+.hero { padding: 4.5rem 0 5rem; }
+.hero h1 { font-size: clamp(2rem, 4.2vw, 3.1rem); font-weight: 700; line-height: 1.12; max-width: 15ch; }
+.hero .lead { max-width: 34rem; }
+.hero-logo { width: min(260px, 70%); height: auto; margin-bottom: 2.25rem; }
+.hero-diagram { width: 100%; height: auto; display: block; }
+
+.role-figure img { width: 100%; height: auto; display: block; }
+.role-figure { margin-bottom: 1.25rem; }
+
+.business-logos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2.5rem 4rem;
+}
+.business-logo { height: 72px; width: auto; max-width: 100%; }
+.business-wordmark { font-size: 1.9rem; font-weight: 700; letter-spacing: -0.02em; color: #fff; line-height: 1; }
+.business-wordmark.nexus { color: var(--vora-orange); }
+
+.team-photo { width: 100%; height: auto; border-radius: 14px; display: block; }
+
+/* Sign-in page */
+.signin-wrap { min-height: calc(100vh - 56px); }
+.signin-panel { padding: 3rem; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; }
+.signin-panel .hero-logo { margin-bottom: 0; width: 220px; }
+.signin-art { width: 100%; max-width: 480px; height: auto; border-radius: 12px; }
+.signin-photo { width: 100%; height: 100%; max-height: 420px; object-fit: cover; border-radius: 12px; }
+
+.empty-art { width: 140px; height: auto; }
+
+/* Cards and figures */
+.stat-card { border: 0; box-shadow: 0 1px 3px rgba(2, 26, 64, 0.08); }
+.stat-label { font-size: 0.85rem; color: #5b6b82; margin-bottom: 0.25rem; }
+.stat-value { font-size: 1.9rem; font-weight: 700; color: var(--vora-navy); margin-bottom: 0; font-variant-numeric: tabular-nums; }
 .stat-note { font-size: 0.8rem; color: #6c757d; margin: 0; }
+.table td.text-end, .table th.text-end { font-variant-numeric: tabular-nums; }
 
 /* Timesheet status pills */
 .status { display: inline-block; padding: 0.15rem 0.6rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; }
@@ -36,3 +100,30 @@ body { background-color: #f5f7fa; }
 .status-submitted { background: #fff3cd; color: #7a5b00; }
 .status-approved  { background: #d1f2e4; color: #0b6b4a; }
 .status-rejected  { background: #f8d7da; color: #842029; }
+
+.role-tag { opacity: 0.7; font-size: 0.8em; margin-left: 0.25rem; }
+.navbar .nav-link.active { color: #fff; border-bottom: 2px solid var(--vora-sky); }
+
+/* Week page */
+.week-table .day-row th, .week-table .day-row td { background: #f8f9fb; }
+.week-table .day-row.weekend th { color: #6c757d; }
+a.stat-card:hover { box-shadow: 0 2px 8px rgba(2, 26, 64, 0.15); }
+
+/* Footer: company contact details on every page */
+.site-footer { padding: 3.25rem 0 2rem; border-top: 1px solid #16386e; }
+.site-footer a { color: #e8f0fb; text-decoration: none; }
+.site-footer a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.footer-contacts p { max-width: 22rem; margin-inline: auto; line-height: 1.6; }
+.footer-icon {
+  width: 34px; height: 34px; margin-bottom: 1rem;
+  fill: none; stroke: var(--vora-sky); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+}
+.footer-bottom { margin-top: 2.75rem; padding-top: 1.75rem; border-top: 1px solid #16386e; color: #8ea6c9; font-size: 0.9rem; }
+.footer-social { display: flex; justify-content: center; gap: 0.75rem; }
+.footer-social a {
+  width: 40px; height: 40px; border-radius: 50%; background: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.footer-social a:hover { background: #dbe9fb; }
+.footer-social svg { width: 20px; height: 20px; fill: none; stroke: var(--vora-blue); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.footer-social svg.solid { fill: var(--vora-blue); stroke: none; }

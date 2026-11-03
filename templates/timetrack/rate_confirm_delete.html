@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load money %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 560px">
+  <h1 class="h3 fw-bold mb-3">Delete this rate?</h1>
+  <div class="card"><div class="card-body">
+    <p>{{ object.business.code }} &middot; {{ object.scope_label }} &middot; <strong>{{ object.hourly_rate|money }}</strong>/hour from {{ object.effective_from|date:"j M Y" }}</p>
+    <form method="post" class="d-flex gap-2">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Yes, delete</button>
+      <a href="{% url 'timetrack:rate_list' %}" class="btn btn-link">Cancel</a>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

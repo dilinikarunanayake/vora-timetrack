@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" role="img" aria-label="Empty approvals tray">
+  <path d="M20 66 L36 30 H124 L140 66 V96 A6 6 0 0 1 134 102 H26 A6 6 0 0 1 20 96 Z" fill="#eef3fa" stroke="#1f3a63" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M20 66 H56 L62 78 H98 L104 66 H140" fill="none" stroke="#1f3a63" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="80" cy="34" r="18" fill="#0a6fd1"/>
+  <path d="M72 34 L78 40 L89 28" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

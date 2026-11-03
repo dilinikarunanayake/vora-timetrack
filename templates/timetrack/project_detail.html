@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load money %}
+
+{% block title %}{{ project.code }} &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <a href="{% url 'timetrack:project_list' %}" class="small">&larr; All projects</a>
+  <div class="d-flex flex-wrap justify-content-between align-items-end mt-2 mb-3 gap-2">
+    <div>
+      <h1 class="h3 fw-bold mb-1">{{ project.code }} &middot; {{ project.name }}</h1>
+      <p class="text-muted mb-0">
+        {{ project.business }}{% if project.client_name %} &middot; Client: {{ project.client_name }}{% endif %}
+        &middot; {% if project.is_billable %}Billable{% else %}Internal (non-billable){% endif %}
+        &middot; {% if project.is_active %}Active{% else %}Closed{% endif %}
+        {% if project.start_date %}&middot; {{ project.start_date|date:"j M Y" }} &ndash; {{ project.end_date|date:"j M Y"|default:"ongoing" }}{% endif %}
+      </p>
+    </div>
+    {% if user.can_manage_projects %}
+      <div class="d-flex gap-2">
+        <a href="{% url 'timetrack:project_edit' project.pk %}" class="btn btn-outline-secondary">Edit project</a>
+        <a href="{% url 'timetrack:task_add' project.pk %}" class="btn btn-accent">+ Add task</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="row g-3 mb-2">
+    <div class="col"><div class="card stat-card h-100"><div class="card-body"><p class="stat-label">Total hours</p><p class="stat-value">{{ summary.total|floatformat:2 }}</p></div></div></div>
+    <div class="col"><div class="card stat-card h-100"><div class="card-body"><p class="stat-label">Billable</p><p class="stat-value">{{ summary.billable|floatformat:2 }}</p></div></div></div>
+    <div class="col"><div class="card stat-card h-100"><div class="card-body"><p class="stat-label">Non-billable</p><p class="stat-value">{{ summary.non_billable|floatformat:2 }}</p></div></div></div>
+    {% if value %}
+    <div class="col-12 col-md"><div class="card stat-card h-100"><div class="card-body">
+      <p class="stat-label">Approved value</p><p class="stat-value">{{ value.approved|money }}</p>
+      <p class="stat-note">{{ value.approved_hours|floatformat:2 }} approved billable h{% if value.unpriced_hours %} &middot; <span class="text-warning-emphasis">{{ value.unpriced_hours|floatformat:2 }} h unpriced</span>{% endif %}</p>
+    </div></div></div>
+    {% endif %}
+  </div>
+  <p class="mb-4 small"><a href="{% url 'reports:report' %}?{{ report_query }}">Open the full report for this project &rarr;</a></p>
+
+  <div class="card">
+    <div class="card-header bg-white fw-semibold">Tasks</div>
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <thead class="table-light"><tr><th>Task</th><th class="text-end">Hours logged</th><th>Type</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {% for t in tasks %}
+          <tr>
+            <td>{{ t.name }}</td>
+            <td class="text-end">{{ t.total_hours|default:0|floatformat:2 }}</td>
+            <td>{% if t.billable %}<span class="badge text-bg-success">Billable</span>{% else %}<span class="badge text-bg-secondary">Non-billable</span>{% endif %}</td>
+            <td>{% if t.is_active %}<span class="status status-approved">Open</span>{% else %}<span class="status status-draft">Closed</span>{% endif %}</td>
+            <td class="text-end">{% if user.can_manage_projects %}<a href="{% url 'timetrack:task_edit' project.pk t.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>{% endif %}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-4">No tasks yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

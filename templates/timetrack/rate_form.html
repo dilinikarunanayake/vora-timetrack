@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Edit{% else %}New{% endif %} rate &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 680px">
+  <a href="{% url 'timetrack:rate_list' %}" class="small">&larr; Billing rates</a>
+  <h1 class="h3 fw-bold mt-2 mb-3">{% if object %}Edit rate{% else %}New billing rate{% endif %}</h1>
+  {% if object.is_used %}
+    <div class="alert alert-info small">This rate has already priced approved hours, so only its end date and notes can change. To charge a different price, end this rate and add a new one starting the next day.</div>
+  {% endif %}
+  <div class="card"><div class="card-body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <p class="form-text">Saving records you ({{ user }}) as the person authorising this rate.</p>
+      <button type="submit" class="btn btn-accent">Save rate</button>
+      <a href="{% url 'timetrack:rate_list' %}" class="btn btn-link">Cancel</a>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

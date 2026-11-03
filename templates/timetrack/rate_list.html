@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load money %}
+
+{% block title %}Billing rates &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-end mb-3 gap-2">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Billing rates</h1>
+      <p class="text-muted mb-0">Authorised hourly rates. The most specific rate in force on the work date is used when a week is approved.</p>
+    </div>
+    <a href="{% url 'timetrack:rate_add' %}" class="btn btn-accent">+ New rate</a>
+  </div>
+
+  {% if unpriced_count %}
+    <div class="alert alert-warning d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <span>{{ unpriced_hours|hours }} approved billable hours ({{ unpriced_count }} entr{{ unpriced_count|pluralize:"y,ies" }}) were approved before a matching rate existed.</span>
+      <form method="post" action="{% url 'timetrack:rate_price_missing' %}">{% csrf_token %}
+        <button class="btn btn-sm btn-warning" type="submit">Price them with current rates</button>
+      </form>
+    </div>
+  {% endif %}
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr><th>Business</th><th>Applies to</th><th class="text-end">Rate / hour</th><th>Effective</th><th>Status</th><th>Authorised</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for r in rates %}
+          <tr>
+            <td>{{ r.business.code }}</td>
+            <td>{{ r.scope_label }}{% if r.notes %}<div class="small text-muted">{{ r.notes }}</div>{% endif %}</td>
+            <td class="text-end fw-semibold">{{ r.hourly_rate|money }}</td>
+            <td class="small">{{ r.effective_from|date:"j M Y" }} &ndash; {{ r.effective_to|date:"j M Y"|default:"open-ended" }}</td>
+            <td>
+              {% if r.effective_from > today %}<span class="status status-submitted">Future</span>
+              {% elif r.effective_to and r.effective_to < today %}<span class="status status-draft">Ended</span>
+              {% else %}<span class="status status-approved">Active</span>{% endif %}
+              {% if r.used_entries %}<div class="small text-muted">used on {{ r.used_entries }} entr{{ r.used_entries|pluralize:"y,ies" }}</div>{% endif %}
+            </td>
+            <td class="small">{{ r.authorised_by }}<div class="text-muted">{{ r.authorised_at|date:"j M Y" }}</div></td>
+            <td class="text-end text-nowrap">
+              <a href="{% url 'timetrack:rate_edit' r.pk %}" class="btn btn-sm btn-outline-secondary">{% if r.used_entries %}End / notes{% else %}Edit{% endif %}</a>
+              {% if not r.used_entries %}<a href="{% url 'timetrack:rate_delete' r.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>{% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">No rates yet. Add a business default rate to start.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card card-body mt-3 small text-muted">
+    <strong class="text-body mb-1">Which rate is used?</strong>
+    <ol class="mb-0">
+      <li>A rate for <em>that person on that project</em></li>
+      <li>otherwise a rate for <em>anyone on that project</em></li>
+      <li>otherwise a rate for <em>that person on any project</em></li>
+      <li>otherwise the <em>business default</em></li>
+    </ol>
+    Rates are fixed onto entries when a week is approved, so changing a rate never alters approved history. To change a price, end the current rate and add a new one.
+  </div>
+</div>
+{% endblock %}

@@ -1,51 +1,84 @@
 {% extends "base.html" %}
+{% load static brand %}
 
-{% block title %}Vora TimeTrack &ndash; Engineer time tracking{% endblock %}
+{% block title %}Vora TimeTrack &ndash; time tracking for Vora's engineers{% endblock %}
 
 {% block content %}
-<section class="hero py-5">
-  <div class="container py-lg-4">
+{% optional_image "img/brand/vora-global-solutions-logo" as vgs_logo %}
+{% optional_image "img/brand/vora-nexus-logo" as vnx_logo %}
+{% optional_image "img/photos/team" as team_photo %}
+
+<!-- Hero: the logo's own navy, the workflow drawn as an architecture diagram -->
+<section class="hero brand-dark">
+  <div class="container">
     <div class="row align-items-center g-5">
-      <div class="col-lg-7">
-        <p class="text-uppercase small fw-semibold text-accent mb-2">Vora Global Solutions &middot; Vora Nexus</p>
-        <h1 class="display-5 fw-bold mb-3">Every engineering hour, recorded and ready for billing.</h1>
-        <p class="lead text-white-50 mb-4">
-          Engineers log their work each day, submit a weekly timesheet, and managers approve it.
-          Billable hours flow straight into project reports.
+      <div class="col-lg-6">
+        <h1 class="mb-3">Time tracking for Vora&rsquo;s engineering teams</h1>
+        <p class="lead mb-4">
+          Log hours against client projects, submit your week, and give managers approved,
+          billable time that&rsquo;s ready for each billing cycle.
         </p>
-        <a href="{% url 'core:dashboard' %}" class="btn btn-accent btn-lg me-2">View dashboard</a>
-        <span class="text-white-50 small">Sign-in arrives in Phase 2</span>
+        {% if user.is_authenticated %}
+          <a href="{% url 'timetrack:dashboard' %}" class="btn btn-accent btn-lg px-4">Open your dashboard</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn btn-accent btn-lg px-4">Sign in</a>
+          <p class="small muted-on-dark mt-3 mb-0">Accounts are set up by your administrator.</p>
+        {% endif %}
       </div>
-      <div class="col-lg-5">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <p class="small text-muted mb-2">This week (sample)</p>
-            <div class="d-flex justify-content-between border-bottom py-2"><span>Hours logged</span><strong>{{ summary.total_hours|floatformat:1 }}</strong></div>
-            <div class="d-flex justify-content-between border-bottom py-2"><span>Billable</span><strong>{{ summary.billable_percent }}%</strong></div>
-            <div class="d-flex justify-content-between py-2"><span>Awaiting approval</span><strong>{{ summary.pending_approvals }}</strong></div>
-          </div>
-        </div>
+      <div class="col-lg-6">
+        <img src="{% static 'img/illustrations/workflow-diagram.svg' %}" class="hero-diagram"
+             alt="Diagram: log time, weekly timesheet, manager approval, then reports and billing, all connected to TimeTrack">
       </div>
     </div>
   </div>
 </section>
 
+<!-- What each role sees -->
 <section class="py-5">
-  <div class="container">
+  <div class="container py-lg-3">
+    <h2 class="h3 fw-bold mb-4">What each role sees</h2>
     <div class="row g-4">
       <div class="col-md-4">
-        <h2 class="h5 fw-semibold">1. Log time</h2>
-        <p class="text-muted mb-0">Date, project, task, hours and a short description of the work.</p>
+        <figure class="role-figure"><img src="{% static 'img/illustrations/role-engineer.svg' %}" alt="A week of hours with a submit button"></figure>
+        <h3 class="h5 fw-semibold">Engineers</h3>
+        <p class="text-muted mb-0">Log time each day against a project and task, then submit the week. A returned week comes back with your manager&rsquo;s note.</p>
       </div>
       <div class="col-md-4">
-        <h2 class="h5 fw-semibold">2. Submit weekly</h2>
-        <p class="text-muted mb-0">Engineers submit one timesheet per week for their manager to review.</p>
+        <figure class="role-figure"><img src="{% static 'img/illustrations/role-manager.svg' %}" alt="An approval queue with approve and return buttons"></figure>
+        <h3 class="h5 fw-semibold">Managers</h3>
+        <p class="text-muted mb-0">Review your team&rsquo;s weeks, approve them or return them with a reason, and keep projects and tasks up to date.</p>
       </div>
       <div class="col-md-4">
-        <h2 class="h5 fw-semibold">3. Approve &amp; report</h2>
-        <p class="text-muted mb-0">Managers approve or reject; reports split billable and non-billable hours.</p>
+        <figure class="role-figure"><img src="{% static 'img/illustrations/role-director.svg' %}" alt="A report of billable hours by project with a total value"></figure>
+        <h3 class="h5 fw-semibold">Directors</h3>
+        <p class="text-muted mb-0">See both businesses, set authorised billing rates, and export approved hours and values for invoicing.</p>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Two businesses: heading and text centred, logos side by side underneath -->
+<section class="brand-dark py-5">
+  <div class="container py-lg-4 text-center">
+    <h2 class="h3 fw-bold mb-2">One system for both businesses</h2>
+    <p class="muted-on-dark mx-auto mb-4" style="max-width: 36rem">Each business keeps its own engineers, projects, approvals and billing rates. Directors see both side by side.</p>
+    <div class="business-logos">
+      {% if vgs_logo %}<img src="{{ vgs_logo }}" alt="Vora Global Solutions" class="business-logo">
+      {% else %}<div class="business-wordmark">Vora Global Solutions</div>{% endif %}
+      {% if vnx_logo %}<img src="{{ vnx_logo }}" alt="Vora Nexus" class="business-logo">
+      {% else %}<div class="business-wordmark nexus">Vora Nexus</div>{% endif %}
+    </div>
+  </div>
+</section>
+
+{% if team_photo %}
+<section class="py-5">
+  <div class="container">
+    <figure class="mb-0">
+      <img src="{{ team_photo }}" alt="The Vora engineering team" class="team-photo">
+      <figcaption class="small text-muted mt-2">The Vora engineering team</figcaption>
+    </figure>
+  </div>
+</section>
+{% endif %}
 {% endblock %}

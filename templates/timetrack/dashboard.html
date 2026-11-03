@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-2">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Hello, {{ user.first_name|default:user.username }}</h1>
+      <p class="text-muted mb-0">
+        This week: {{ week_start|date:"D j M" }} &ndash; {{ week_end|date:"D j M Y" }}
+        &middot;
+        {% if user.is_director %}All businesses{% elif user.is_manager %}{{ user.business }} team{% else %}Your time{% endif %}
+      </p>
+    </div>
+    {% if can_log_time %}
+      <div class="d-flex gap-2">
+        <a href="{% url 'timetrack:my_week' week_start|date:'Y-m-d' %}" class="btn btn-outline-secondary">My week</a>
+        <a href="{% url 'timetrack:entry_add' %}" class="btn btn-accent">+ Log time</a>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if last_week_open %}
+    <div class="alert alert-warning d-flex justify-content-between align-items-center">
+      <span>Last week's timesheet ({{ last_week_open.week_start|date:"j M" }}) is still {{ last_week_open.get_status_display|lower }}.</span>
+      <a class="btn btn-sm btn-warning" href="{% url 'timetrack:my_week' last_week_open.week_start|date:'Y-m-d' %}">Review and submit</a>
+    </div>
+  {% endif %}
+
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+      <div class="card stat-card h-100"><div class="card-body">
+        <p class="stat-label">Total hours</p>
+        <p class="stat-value">{{ summary.total|floatformat:2 }}</p>
+      </div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card stat-card h-100"><div class="card-body">
+        <p class="stat-label">Billable</p>
+        <p class="stat-value">{{ summary.billable|floatformat:2 }}</p>
+        <p class="stat-note">{{ summary.billable_percent }}% of total</p>
+      </div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card stat-card h-100"><div class="card-body">
+        <p class="stat-label">Non-billable</p>
+        <p class="stat-value">{{ summary.non_billable|floatformat:2 }}</p>
+      </div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      {% if user.can_manage_projects %}
+        <a href="{% url 'timetrack:approvals' %}" class="card stat-card h-100 text-decoration-none"><div class="card-body">
+          <p class="stat-label">Awaiting your approval</p>
+          <p class="stat-value">{{ approvals_count }}</p>
+          <p class="stat-note">submitted timesheet{{ approvals_count|pluralize }} &rarr;</p>
+        </div></a>
+      {% elif can_log_time %}
+        <a href="{% url 'timetrack:my_week' week_start|date:'Y-m-d' %}" class="card stat-card h-100 text-decoration-none"><div class="card-body">
+          <p class="stat-label">This week's timesheet</p>
+          <p class="stat-value fs-4 mt-2">{{ my_week_status }}</p>
+          <p class="stat-note">open my week &rarr;</p>
+        </div></a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-3">
+    <div class="col-lg-5">
+      <div class="card h-100">
+        <div class="card-header bg-white fw-semibold">{{ breakdown_title }} (this week)</div>
+        <ul class="list-group list-group-flush">
+          {% for row in breakdown %}
+            <li class="list-group-item d-flex justify-content-between">
+              <span>{{ row.label }}</span>
+              <span><strong>{{ row.total|floatformat:2 }}</strong> <span class="text-muted small">({{ row.billable|default:0|floatformat:2 }} billable)</span></span>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">No time logged this week yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-lg-7">
+      <div class="card h-100">
+        <div class="card-header bg-white d-flex justify-content-between">
+          <span class="fw-semibold">Recent entries</span>
+          <a href="{% url 'timetrack:entry_list' %}" class="small">View all</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <tbody>
+              {% for e in recent_entries %}
+              <tr>
+                <td class="ps-3 text-nowrap">{{ e.work_date|date:"D j M" }}</td>
+                {% if not user.is_engineer %}<td>{{ e.engineer }}</td>{% endif %}
+                <td>{{ e.task.project.code }} › {{ e.task.name }}</td>
+                <td class="text-end">{{ e.hours|floatformat:2 }}</td>
+                <td>{% if e.is_billable %}<span class="badge text-bg-success">B</span>{% else %}<span class="badge text-bg-secondary">NB</span>{% endif %}</td>
+                <td class="pe-3"><span class="status status-{{ e.timesheet.status|lower }}">{{ e.timesheet.get_status_display }}</span></td>
+              </tr>
+              {% empty %}
+              <tr><td class="text-muted p-3">No entries yet.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

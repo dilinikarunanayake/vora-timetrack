@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Delete time entry &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 560px">
+  <h1 class="h3 fw-bold mb-3">Delete time entry?</h1>
+  <div class="card"><div class="card-body">
+    <p class="mb-1"><strong>{{ object.work_date|date:"D j M Y" }}</strong> &middot; {{ object.hours|floatformat:2 }} hours</p>
+    <p class="mb-1">{{ object.task.project }} › {{ object.task.name }}</p>
+    <p class="text-muted small">{{ object.description }}</p>
+    <form method="post" class="d-flex gap-2">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next_url }}">
+      <button type="submit" class="btn btn-danger">Yes, delete</button>
+      <a href="{{ cancel_url }}" class="btn btn-link">Cancel</a>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

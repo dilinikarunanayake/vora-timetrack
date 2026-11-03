@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load form_tags money %}
+
+{% block title %}Reports &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-end mb-3 gap-2">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Reports</h1>
+      <p class="text-muted mb-0">
+        {% if user.is_director %}Both businesses{% elif user.is_manager %}{{ user.business }}{% else %}Your own time{% endif %}
+        {% if report %}&middot; Timesheets: {{ report.status_label|lower }}{% endif %}
+      </p>
+    </div>
+    {% if report %}
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-secondary" href="{% url 'reports:export_summary' %}?{{ querystring }}">&darr; Summary CSV</a>
+        <a class="btn btn-outline-secondary" href="{% url 'reports:export_detail' %}?{{ querystring }}">&darr; Detailed CSV</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Filters: a GET form, so the URL holds the whole report and can be bookmarked -->
+  <form method="get" class="card card-body mb-3">
+    {% if form.non_field_errors %}<div class="alert alert-danger py-2">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+    <div class="row g-2 align-items-end">
+      <div class="col-6 col-md-2"><label class="form-label small">{{ form.start.label }}</label>{{ form.start|bootstrap }}</div>
+      <div class="col-6 col-md-2"><label class="form-label small">{{ form.end.label }}</label>{{ form.end|bootstrap }}</div>
+      <div class="col-6 col-md-2"><label class="form-label small">{{ form.group_by.label }}</label>{{ form.group_by|bootstrap }}</div>
+      <div class="col-6 col-md-2"><label class="form-label small">{{ form.status.label }}</label>{{ form.status|bootstrap }}</div>
+      {% if form.business %}<div class="col-6 col-md-2"><label class="form-label small">Business</label>{{ form.business|bootstrap }}</div>{% endif %}
+      <div class="col-6 col-md-2"><label class="form-label small">Project</label>{{ form.project|bootstrap }}</div>
+      {% if form.engineer %}<div class="col-6 col-md-2"><label class="form-label small">{{ form.engineer.label }}</label>{{ form.engineer|bootstrap }}</div>{% endif %}
+      <div class="col-6 col-md-2 d-flex gap-2">
+        <button class="btn btn-accent w-100" type="submit">Run report</button>
+        <a class="btn btn-outline-secondary" href="{% url 'reports:report' %}" title="Reset filters">&times;</a>
+      </div>
+    </div>
+    {% if quick_ranges %}
+      <div class="mt-2 small">
+        {% for r in quick_ranges %}
+          <a href="?{{ r.query }}" class="me-3 {% if r.active %}fw-semibold text-decoration-none{% endif %}">{{ r.label }}</a>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </form>
+
+  {% if report %}
+    {% if report.show_costs and report.totals.unpriced_hours %}
+      <div class="alert alert-warning">
+        {{ report.totals.unpriced_hours|hours }} approved billable hours have <strong>no rate</strong> and aren't in the value.
+        <a href="{% url 'timetrack:rate_list' %}">Add a rate, then price them &rarr;</a>
+      </div>
+    {% endif %}
+
+    <!-- Headline numbers -->
+    <div class="row g-3 mb-3">
+      <div class="col-6 col-lg-3"><div class="card stat-card h-100"><div class="card-body">
+        <p class="stat-label">Total hours</p><p class="stat-value">{{ report.totals.hours|hours }}</p>
+        <p class="stat-note">{{ report.entry_count }} entr{{ report.entry_count|pluralize:"y,ies" }}</p>
+      </div></div></div>
+      <div class="col-6 col-lg-3"><div class="card stat-card h-100"><div class="card-body">
+        <p class="stat-label">Billable</p><p class="stat-value">{{ report.totals.billable|hours }}</p>
+        <p class="stat-note">{{ report.totals.billable_percent }}% of total</p>
+      </div></div></div>
+      <div class="col-6 col-lg-3"><div class="card stat-card h-100"><div class="card-body">
+        <p class="stat-label">Non-billable</p><p class="stat-value">{{ report.totals.non_billable|hours }}</p>
+      </div></div></div>
+      {% if report.show_costs %}
+      <div class="col-6 col-lg-3"><div class="card stat-card h-100"><div class="card-body">
+        <p class="stat-label">Approved value</p><p class="stat-value">{{ report.totals.approved_value|money }}</p>
+        {% if report.includes_unapproved %}<p class="stat-note">+ {{ report.totals.estimated_value|money }} estimated, not yet approved</p>{% endif %}
+      </div></div></div>
+      {% endif %}
+    </div>
+
+    <!-- Grouped table -->
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 report-table">
+          <thead class="table-light">
+            <tr>
+              <th>{{ report.group_label }}</th>
+              <th class="text-end">Hours</th>
+              <th style="width: 18%">Share</th>
+              <th class="text-end">Billable</th>
+              <th class="text-end">Non-billable</th>
+              <th class="text-end">Billable %</th>
+              {% if report.show_costs %}
+                <th class="text-end">Approved value</th>
+                {% if report.includes_unapproved %}<th class="text-end">Estimated</th>{% endif %}
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in report.rows %}
+            <tr>
+              <td>{{ row.label }}{% if row.sub %}<div class="small text-muted">{{ row.sub }}</div>{% endif %}</td>
+              <td class="text-end fw-semibold">{{ row.hours|hours }}</td>
+              <td><div class="progress" style="height: 8px" title="{{ row.share }}% of hours"><div class="progress-bar bg-accent" style="width: {{ row.share }}%"></div></div></td>
+              <td class="text-end">{{ row.billable|hours }}</td>
+              <td class="text-end">{{ row.non_billable|hours }}</td>
+              <td class="text-end">{{ row.billable_percent }}%</td>
+              {% if report.show_costs %}
+                <td class="text-end">{{ row.approved_value|money }}{% if row.unpriced_hours %}<div class="small text-warning-emphasis">{{ row.unpriced_hours|hours }} h unpriced</div>{% endif %}</td>
+                {% if report.includes_unapproved %}<td class="text-end text-muted">{{ row.estimated_value|money }}</td>{% endif %}
+              {% endif %}
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" class="text-center text-muted py-4">No time matches these filters.{% if form.cleaned_data.status == "approved" %} Try including submitted or draft timesheets.{% endif %}</td></tr>
+            {% endfor %}
+          </tbody>
+          {% if report.rows %}
+          <tfoot class="table-light fw-semibold">
+            <tr>
+              <td>Total</td>
+              <td class="text-end">{{ report.totals.hours|hours }}</td>
+              <td></td>
+              <td class="text-end">{{ report.totals.billable|hours }}</td>
+              <td class="text-end">{{ report.totals.non_billable|hours }}</td>
+              <td class="text-end">{{ report.totals.billable_percent }}%</td>
+              {% if report.show_costs %}
+                <td class="text-end">{{ report.totals.approved_value|money }}</td>
+                {% if report.includes_unapproved %}<td class="text-end text-muted">{{ report.totals.estimated_value|money }}</td>{% endif %}
+              {% endif %}
+            </tr>
+          </tfoot>
+          {% endif %}
+        </table>
+      </div>
+    </div>
+    {% if report.show_costs %}
+      <p class="small text-muted mt-2">
+        Approved value uses the rate fixed when each week was approved. Estimated value applies today's rates to weeks not yet approved and may change.
+      </p>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

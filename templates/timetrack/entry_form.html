@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Edit{% else %}Log{% endif %} time &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 680px">
+  <h1 class="h3 fw-bold mb-3">{% if object %}Edit time entry{% else %}Log time{% endif %}</h1>
+  <div class="card"><div class="card-body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next_url }}">
+      {% include "includes/form_fields.html" %}
+      <p class="form-text">Billable or non-billable is set automatically from the project and task.</p>
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-accent">Save</button>
+        {% if not object %}<button type="submit" name="save_add" class="btn btn-outline-primary">Save and add another</button>{% endif %}
+        <a href="{{ cancel_url }}" class="btn btn-link">Cancel</a>
+      </div>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

@@ -55,7 +55,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",      # one-off notifications ("Timesheet submitted")
     "django.contrib.staticfiles",   # serves CSS/JS/images
     # Our apps
-    "core",                         # landing page and dashboard
+    "core",                         # public landing page
+    "accounts",                     # businesses, users, roles, sign-in
+    "timetrack",                    # projects, tasks, time entries, timesheets, rates
+    "reports",                      # reports and CSV export (no tables of its own)
 ]
 
 MIDDLEWARE = [
@@ -81,6 +84,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "timetrack.context_processors.approvals",  # approvals badge in the menu
+                "core.context_processors.company",  # company details for the footer
             ],
         },
     },
@@ -92,20 +97,57 @@ WSGI_APPLICATION = "config.wsgi.application"
 # --- Database -------------------------------------------------------------
 # Phase 1 uses SQLite: a single file (db.sqlite3), no server to install.
 # We will switch to PostgreSQL in a later phase by changing only this block.
+# ATOMIC_REQUESTS wraps each request in a transaction: if anything fails,
+# nothing half-saved is left behind.
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        "ATOMIC_REQUESTS": True,
     }
 }
+
+
+# --- Users and sign-in ---------------------------------------------------
+
+# Use our own User model (accounts/models.py) instead of Django's default.
+AUTH_USER_MODEL = "accounts.User"
+
+LOGIN_URL = "login"                          # where @login_required sends people
+LOGIN_REDIRECT_URL = "timetrack:dashboard"   # after signing in
+LOGOUT_REDIRECT_URL = "core:home"            # after signing out
+
+# Sign users out when they close the browser, and after 8 hours regardless.
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 8 * 60 * 60
+
+
+# --- Company details (shown in the footer of every page) -------------------
+
+COMPANY = {
+    "name": "Vora Global Solutions",
+    "address": "Flat 1 Vienna Court, Vesey Close, Farnborough, England, GU14 8UT",
+    "email": "info@voraglobalsolutions.com",
+    "phone": "+44 7404 741045",
+    # Paste the full page addresses here (https://...). Empty = icon hidden.
+    "linkedin_url": "",
+    "facebook_url": "",
+}
+
+
+# --- Billing ----------------------------------------------------------------
+
+# Currency for all billing rates and amounts.
+BILLING_CURRENCY = "GBP"
+BILLING_CURRENCY_SYMBOL = "£"
 
 
 # --- Passwords ------------------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 10}},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]

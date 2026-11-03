@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{% if object %}Edit{% else %}New{% endif %} project &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width: 680px">
+  <h1 class="h3 fw-bold mb-3">{% if object %}Edit {{ object.code }}{% else %}New project{% endif %}</h1>
+  {% if not user.is_director %}<p class="text-muted">Business: {{ user.business }}</p>{% endif %}
+  <div class="card"><div class="card-body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% include "includes/form_fields.html" %}
+      <button type="submit" class="btn btn-accent">Save project</button>
+      <a href="{% if object %}{% url 'timetrack:project_detail' object.pk %}{% else %}{% url 'timetrack:project_list' %}{% endif %}" class="btn btn-link">Cancel</a>
+    </form>
+  </div></div>
+</div>
+{% endblock %}

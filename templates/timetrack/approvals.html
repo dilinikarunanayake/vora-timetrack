@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Approvals &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 fw-bold mb-1">Approvals</h1>
+  <p class="text-muted">{% if user.is_director %}All businesses{% else %}{{ user.business }}{% endif %} &middot; open a timesheet to approve or reject it.</p>
+
+  <div class="card mb-4">
+    <div class="card-header bg-white fw-semibold">Waiting for review ({{ waiting|length }})</div>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr><th>Engineer</th>{% if user.is_director %}<th>Business</th>{% endif %}<th>Week</th><th class="text-end">Hours</th><th class="text-end">Billable</th><th>Submitted</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for t in waiting %}
+          <tr>
+            <td>{{ t.engineer }}</td>
+            {% if user.is_director %}<td class="small">{{ t.engineer.business.code }}</td>{% endif %}
+            <td>{{ t.week_start|date:"D j M" }} &ndash; {{ t.week_end|date:"D j M" }}</td>
+            <td class="text-end">{{ t.total|default:0|floatformat:2 }}</td>
+            <td class="text-end">{{ t.billable|default:0|floatformat:2 }}</td>
+            <td class="small text-muted">{{ t.submitted_at|date:"j M, H:i" }}</td>
+            <td class="text-end"><a href="{% url 'timetrack:timesheet_detail' t.pk %}" class="btn btn-sm btn-accent">Review</a></td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">
+            <img src="{% static 'img/illustrations/all-caught-up.svg' %}" alt="" class="empty-art mb-2"><br>
+            Nothing waiting. Submitted timesheets will appear here.
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-white fw-semibold">Recently reviewed</div>
+    <div class="table-responsive">
+      <table class="table align-middle mb-0">
+        <tbody>
+          {% for t in recent %}
+          <tr>
+            <td class="ps-3">{{ t.engineer }}</td>
+            <td>{{ t.week_start|date:"j M" }} &ndash; {{ t.week_end|date:"j M" }}</td>
+            <td class="text-end">{{ t.total|default:0|floatformat:2 }} h</td>
+            <td><span class="status status-{{ t.status|lower }}">{{ t.get_status_display }}</span></td>
+            <td class="small text-muted">{{ t.reviewed_by }} &middot; {{ t.reviewed_at|date:"j M" }}</td>
+            <td class="text-end pe-3"><a href="{% url 'timetrack:timesheet_detail' t.pk %}" class="small">View</a></td>
+          </tr>
+          {% empty %}
+          <tr><td class="text-muted p-3">No reviews yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

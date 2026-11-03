@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static brand %}
+
+{% block title %}Sign in &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+{% optional_image "img/brand/vora-global-solutions-logo" as vgs_logo %}
+{% optional_image "img/photos/sign-in" as signin_photo %}
+<div class="container-fluid px-0">
+  <div class="row g-0 signin-wrap">
+    <!-- Brand panel (hidden on small phones so the form comes first) -->
+    <div class="col-lg-6 brand-dark signin-panel d-none d-md-flex">
+      {% if vgs_logo %}<img src="{{ vgs_logo }}" alt="Vora Global Solutions" class="hero-logo">{% endif %}
+      {% if signin_photo %}
+        <img src="{{ signin_photo }}" alt="Vora engineers at work" class="signin-photo">
+      {% else %}
+        <img src="{% static 'img/illustrations/engineer-workstation.svg' %}" alt="" class="signin-art">
+      {% endif %}
+      <p class="muted-on-dark mb-0" style="max-width: 30rem">Log today&rsquo;s hours, check your week, and submit it for approval.</p>
+    </div>
+
+    <!-- Form -->
+    <div class="col-lg-6 d-flex align-items-center justify-content-center p-4 p-md-5">
+      <div class="w-100" style="max-width: 380px">
+        <h1 class="h3 fw-bold mb-1">Sign in</h1>
+        <p class="text-muted mb-4">Use the username and password your administrator gave you.</p>
+        {% if form.errors %}
+          <div class="alert alert-danger small">Your username and password didn't match. Please try again.</div>
+        {% endif %}
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label" for="id_username">Username</label>
+            <input type="text" name="username" id="id_username" class="form-control form-control-lg" autocomplete="username"
+                   value="{{ form.username.value|default:'' }}" required autofocus>
+          </div>
+          <div class="mb-4">
+            <label class="form-label" for="id_password">Password</label>
+            <input type="password" name="password" id="id_password" class="form-control form-control-lg" autocomplete="current-password" required>
+          </div>
+          <input type="hidden" name="next" value="{{ next }}">
+          <button type="submit" class="btn btn-accent btn-lg w-100">Sign in</button>
+        </form>
+        <p class="small text-muted mt-4 mb-0">Forgotten your password? Ask your manager or a director to reset it.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

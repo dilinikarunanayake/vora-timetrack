@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-labelledby="t">
+  <title id="t">An engineer's workstation: a monitor showing a weekly timesheet, a laptop with code, and a server rack</title>
+  <style>
+    .line { fill: none; stroke: #c9d8ee; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .dim { fill: none; stroke: #2d5a9a; stroke-width: 1.5; stroke-linecap: round; }
+    .screen { fill: #0b2f63; stroke: #c9d8ee; stroke-width: 2; }
+    .blue { fill: #29a8e8; }
+    .deep { fill: #0a6fd1; }
+  </style>
+  <defs>
+    <pattern id="g" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0 H0 V24" fill="none" stroke="#0e3168" stroke-width="1"/></pattern>
+  </defs>
+  <rect width="480" height="360" fill="url(#g)"/>
+
+  <!-- Server rack -->
+  <g transform="translate(350 54)">
+    <rect class="screen" width="96" height="190" rx="6"/>
+    <g>
+      <rect x="10" y="14" width="76" height="26" rx="3" fill="#123d7a"/>
+      <rect x="10" y="48" width="76" height="26" rx="3" fill="#123d7a"/>
+      <rect x="10" y="82" width="76" height="26" rx="3" fill="#123d7a"/>
+      <rect x="10" y="116" width="76" height="26" rx="3" fill="#123d7a"/>
+      <rect x="10" y="150" width="76" height="26" rx="3" fill="#123d7a"/>
+    </g>
+    <g class="blue"><circle cx="74" cy="27" r="3"/><circle cx="74" cy="61" r="3"/><circle cx="74" cy="129" r="3"/><circle cx="74" cy="163" r="3"/></g>
+    <circle cx="74" cy="95" r="3" fill="#f2a541"/>
+    <g class="dim"><path d="M20 27 H56 M20 61 H50 M20 95 H58 M20 129 H46 M20 163 H54"/></g>
+  </g>
+
+  <!-- Monitor with a weekly timesheet -->
+  <g transform="translate(34 40)">
+    <rect class="screen" width="270" height="168" rx="8"/>
+    <rect x="12" y="12" width="246" height="20" rx="3" fill="#123d7a"/>
+    <circle cx="24" cy="22" r="4" class="blue"/>
+    <rect x="34" y="19" width="70" height="6" rx="3" fill="#4c7fc4"/>
+    <!-- 5 weekday rows with hour bars -->
+    <g font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" fill="#9db4d6">
+      <text x="14" y="54">Mon</text><text x="14" y="76">Tue</text><text x="14" y="98">Wed</text><text x="14" y="120">Thu</text><text x="14" y="142">Fri</text>
+    </g>
+    <g>
+      <rect x="46" y="46" width="150" height="10" rx="3" class="deep"/><rect x="196" y="46" width="22" height="10" rx="3" fill="#4c7fc4"/>
+      <rect x="46" y="68" width="120" height="10" rx="3" class="deep"/><rect x="166" y="68" width="56" height="10" rx="3" fill="#4c7fc4"/>
+      <rect x="46" y="90" width="176" height="10" rx="3" class="deep"/>
+      <rect x="46" y="112" width="96" height="10" rx="3" class="deep"/><rect x="142" y="112" width="70" height="10" rx="3" fill="#4c7fc4"/>
+      <rect x="46" y="134" width="160" height="10" rx="3" class="deep"/>
+    </g>
+    <g font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="10" fill="#e8f0fb" text-anchor="end">
+      <text x="256" y="54">7.5</text><text x="256" y="76">8.0</text><text x="256" y="98">8.0</text><text x="256" y="120">7.5</text><text x="256" y="142">7.0</text>
+    </g>
+    <rect x="200" y="16" width="52" height="12" rx="6" fill="#d1f2e4"/>
+    <path d="M210 22 l3 3 l6 -6" fill="none" stroke="#0b6b4a" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="223" y="20" width="22" height="4" rx="2" fill="#0b6b4a"/>
+    <path class="line" d="M118 168 V196 M90 200 H176"/>
+  </g>
+
+  <!-- Laptop with code -->
+  <g transform="translate(214 196)">
+    <path class="screen" d="M14 0 H186 A6 6 0 0 1 192 6 V96 H8 V6 A6 6 0 0 1 14 0 Z"/>
+    <g stroke-linecap="round" stroke-width="5" fill="none">
+      <path d="M26 20 H62" stroke="#29a8e8"/><path d="M70 20 H118" stroke="#9db4d6"/>
+      <path d="M38 36 H96" stroke="#9db4d6"/><path d="M104 36 H140" stroke="#f2a541"/>
+      <path d="M38 52 H74" stroke="#29a8e8"/><path d="M82 52 H150" stroke="#9db4d6"/>
+      <path d="M26 68 H52" stroke="#9db4d6"/>
+      <path d="M26 84 H44" stroke="#29a8e8"/>
+    </g>
+    <path class="line" d="M-6 100 H206 L198 110 H2 Z" fill="#0b2f63"/>
+  </g>
+
+  <!-- Mug -->
+  <g transform="translate(70 262)">
+    <path class="line" d="M0 0 H34 V34 A6 6 0 0 1 28 40 H6 A6 6 0 0 1 0 34 Z" fill="#0b2f63"/>
+    <path class="line" d="M34 8 H40 A7 7 0 0 1 40 26 H34"/>
+    <path class="dim" d="M10 -8 q4 -6 0 -12 M22 -8 q4 -6 0 -12"/>
+  </g>
+
+  <!-- Desk -->
+  <path class="line" d="M16 308 H464"/>
+</svg>
