@@ -2,9 +2,10 @@
 
 Time tracking for engineers and managers at Vora Global Solutions and Vora Nexus.
 
-**Current stage: Phase 4.** Sign-in and roles, projects and tasks, time entries,
-weekly timesheets with approval and locking, **authorised billing rates, reports and
-CSV export**. All demo data and rates are fictional.
+**Current stage: Phase 5, ready to deploy.** Sign-in and roles, projects and tasks, time
+entries, weekly timesheets with approval and locking, authorised billing rates, reports
+and CSV export, and **production settings for PostgreSQL and HTTPS hosting**.
+To put it online, follow **[DEPLOYMENT.md](DEPLOYMENT.md)**.
 
 ## Folder structure
 
@@ -12,6 +13,9 @@ CSV export**. All demo data and rates are fictional.
 vora_timetrack/
 ├── manage.py               # Command-line tool: server, migrations, tests, seed_demo
 ├── requirements.txt        # Python packages this project needs
+├── DEPLOYMENT.md           # Step-by-step guide to putting the app online
+├── build.sh                # Runs on each deploy: install, collect static files, migrate
+├── render.yaml             # Live setup for Render (PostgreSQL + web service, Frankfurt)
 ├── .env.example            # Template for local secrets (copy to .env)
 ├── .gitignore              # Files Git must never track (.env, db, .venv)
 ├── config/                 # PROJECT package: settings for the whole site
@@ -135,7 +139,7 @@ python -m pip install -r requirements.txt
 python manage.py migrate              # build/update database tables
 python manage.py seed_demo            # fictional demo users and data
 python manage.py createsuperuser      # your own director/admin login
-python manage.py test                 # 80 tests
+python manage.py test                 # 87 tests
 python manage.py runserver            # http://127.0.0.1:8000/
 ```
 
@@ -168,11 +172,13 @@ Every page's footer shows the address, email, phone and copyright from `COMPANY`
 - Passwords are stored as one-way hashes by Django, never as plain text.
 - Sign-out is a POST request with a CSRF token. Sessions end when the browser closes or after 8 hours.
 - `seed_demo` refuses to run unless `DJANGO_DEBUG=True`.
+- With `DJANGO_DEBUG=False`: HTTPS only, secure cookies, HSTS, no-sniff, clickjacking protection.
+- After 5 wrong passwords a username is paused for 1 hour (django-axes). Unlock in Admin → Axes.
 
 ## Roadmap
 
 1. Phase 1: setup, landing page, sample dashboard ✅
 2. Phase 2: models, sign-in, roles, projects/tasks, time entries ✅
 3. Phase 3: weekly timesheets, submit / approve / reject, lock approved weeks ✅
-4. **Phase 4: reports, CSV export, authorised billing rates and project value** ✅
-5. Phase 5: PostgreSQL, production settings, online deployment
+4. Phase 4: reports, CSV export, authorised billing rates and project value ✅
+5. **Phase 5: PostgreSQL, production settings, deployment guide** ✅ (deploy with DEPLOYMENT.md)

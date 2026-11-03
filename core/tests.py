@@ -29,3 +29,10 @@ class FooterTests(TestCase):
         response = self.client.get(reverse("core:home"))
         self.assertContains(response, 'href="https://www.linkedin.com/company/example"')
         self.assertNotContains(response, "on Facebook")
+
+
+class HealthCheckTests(TestCase):
+    def test_healthz_is_public_and_checks_database(self):
+        response = self.client.get(reverse("core:healthz"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b"ok")

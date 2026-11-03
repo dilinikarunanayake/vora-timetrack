@@ -1,2 +1,10 @@
+# Web framework
 Django>=5.2,<5.3
+# Reads .env files on your Mac
 python-dotenv>=1.0
+# Production
+dj-database-url>=3.0        # reads DATABASE_URL
+psycopg[binary]>=3.2        # PostgreSQL driver
+gunicorn>=23.0              # production web server
+whitenoise>=6.9             # serves CSS, JS and images
+django-axes>=8.0            # blocks repeated wrong-password attempts

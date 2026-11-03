@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Sign-in paused &ndash; Vora TimeTrack{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 560px">
+  <h1 class="h3 fw-bold mb-3">Sign-in paused for this account</h1>
+  <p>There were too many wrong passwords for this username, so sign-in is paused for one hour to protect the account.</p>
+  <p class="text-muted">If this wasn't you, or you need access sooner, contact a director. They can unlock the account straight away.</p>
+  <a href="{% url 'core:home' %}" class="btn btn-outline-secondary">Back to home</a>
+</div>
+{% endblock %}
